@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <magentoguy_pricematch>
+            <general>
+                <enabled>1</enabled>
+                <allowed_domains>amazon.com
+bestbuy.com
+walmart.com
+target.com</allowed_domains>
+                <max_discount_percent>15</max_discount_percent>
+                <coupon_ttl_hours>48</coupon_ttl_hours>
+                <daily_limit>3</daily_limit>
+                <sku_cooldown_hours>24</sku_cooldown_hours>
+            </general>
+            <authority>
+                <url>http://pricing-authority:8080/v1/verify</url>
+                <api_key backend_model="Magento\Config\Model\Config\Backend\Encrypted"/>
+                <timeout>3</timeout>
+                <retry_backoff>30,120,600</retry_backoff>
+                <breaker_threshold>5</breaker_threshold>
+                <breaker_cooldown>60</breaker_cooldown>
+            </authority>
+            <email>
+                <identity>general</identity>
+                <approved_template>magentoguy_pricematch_email_approved_template</approved_template>
+                <rejected_template>magentoguy_pricematch_email_rejected_template</rejected_template>
+            </email>
+        </magentoguy_pricematch>
+    </default>
+</config>

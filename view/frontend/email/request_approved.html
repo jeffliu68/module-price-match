@@ -1,0 +1,30 @@
+<!--
+/**
+ * Copyright © MagentoGuy. All rights reserved.
+ */
+-->
+<!--@subject {{trans "Your price match for %sku is approved" sku=$sku}} @-->
+<!--@vars {
+"var customer_name":"Customer Name",
+"var product_name":"Product Name",
+"var sku":"SKU",
+"var coupon_code":"Coupon Code",
+"var discount":"Discount",
+"var matched_price":"Matched Price",
+"var expires_at":"Expires At",
+"var account_url":"Account URL"
+} @-->
+{{template config_path="design/email/header_template"}}
+
+<p class="greeting">{{trans "Hi %name," name=$customer_name}}</p>
+<p>{{trans "Good news: we verified the lower price you found for %product (%sku)." product=$product_name sku=$sku}}</p>
+<table class="message-details">
+    <tr><td><strong>{{trans "Your code"}}</strong></td><td><strong>{{var coupon_code}}</strong></td></tr>
+    <tr><td>{{trans "Matched price"}}</td><td>{{var matched_price}}</td></tr>
+    <tr><td>{{trans "Discount (one unit)"}}</td><td>{{trans "up to %discount" discount=$discount}}</td></tr>
+    <tr><td>{{trans "Valid until"}}</td><td>{{var expires_at}}</td></tr>
+</table>
+<p>{{trans "Enter the code at checkout while signed in to this account. It can be used once, for one unit of this product."}}</p>
+<p><a href="{{var account_url}}">{{trans "View your price match requests"}}</a></p>
+
+{{template config_path="design/email/footer_template"}}

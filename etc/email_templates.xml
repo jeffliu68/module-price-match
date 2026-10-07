@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Email:etc/email_templates.xsd">
+    <template id="magentoguy_pricematch_email_approved_template" label="Price Match Approved" file="request_approved.html" type="html" module="MagentoGuy_PriceMatch" area="frontend"/>
+    <template id="magentoguy_pricematch_email_rejected_template" label="Price Match Rejected" file="request_rejected.html" type="html" module="MagentoGuy_PriceMatch" area="frontend"/>
+</config>

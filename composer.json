@@ -1,0 +1,42 @@
+{
+    "name": "magentoguy/module-price-match",
+    "description": "Asynchronous price match requests with single-use, customer-bound auto-coupons for Adobe Commerce / Magento Open Source.",
+    "type": "magento2-module",
+    "license": "OSL-3.0",
+    "version": "1.0.0",
+    "require": {
+        "php": "~8.2.0||~8.3.0||~8.4.0",
+        "magento/framework": "^103.0.7",
+        "magento/framework-message-queue": "^100.4.7",
+        "magento/module-backend": "^102.0.7",
+        "magento/module-catalog": "^104.0.7",
+        "magento/module-catalog-graph-ql": "^100.4.7",
+        "magento/module-catalog-rule": "^101.2.7",
+        "magento/module-config": "^101.2.7",
+        "magento/module-configurable-product": "^100.4.7",
+        "magento/module-customer": "^103.0.7",
+        "magento/module-graph-ql": "^100.4.7",
+        "magento/module-quote": "^101.2.7",
+        "magento/module-sales": "^103.0.7",
+        "magento/module-sales-rule": "^101.2.7",
+        "magento/module-store": "^101.1.7",
+        "magento/module-store-graph-ql": "^100.4.5",
+        "magento/module-ui": "^101.2.7"
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "MagentoGuy\\PriceMatch\\": ""
+        },
+        "exclude-from-classmap": [
+            "/dev/"
+        ]
+    },
+    "archive": {
+        "exclude": [
+            "/dev"
+        ]
+    }
+}

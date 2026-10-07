@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="MagentoGuy\PriceMatch\Api\Data\PriceMatchRequestInterface" type="MagentoGuy\PriceMatch\Model\PriceMatchRequest"/>
+    <preference for="MagentoGuy\PriceMatch\Api\Data\PriceMatchRequestSearchResultsInterface" type="MagentoGuy\PriceMatch\Model\PriceMatchRequestSearchResults"/>
+    <preference for="MagentoGuy\PriceMatch\Api\PriceMatchRequestRepositoryInterface" type="MagentoGuy\PriceMatch\Model\PriceMatchRequestRepository"/>
+    <preference for="MagentoGuy\PriceMatch\Api\SubmitPriceMatchRequestInterface" type="MagentoGuy\PriceMatch\Model\Submit\SubmitService"/>
+
+    <!-- Register the custom simple action through the factory's own extension point (no plugin needed). -->
+    <type name="Magento\SalesRule\Model\Rule\Action\Discount\CalculatorFactory">
+        <arguments>
+            <argument name="discountRules" xsi:type="array">
+                <item name="price_match_fixed" xsi:type="string">MagentoGuy\PriceMatch\Model\Rule\Action\Discount\PriceMatchFixed</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\SalesRule\Model\ValidateCoupon">
+        <plugin name="magentoguyRestrictPriceMatchCoupon" type="MagentoGuy\PriceMatch\Plugin\SalesRule\RestrictPriceMatchCouponPlugin" sortOrder="100"/>
+    </type>
+    <type name="Magento\SalesRule\Model\Rule\Action\SimpleActionOptionsProvider">
+        <plugin name="magentoguyPriceMatchSimpleAction" type="MagentoGuy\PriceMatch\Plugin\SalesRule\AddSimpleActionOptionPlugin"/>
+    </type>
+
+    <!-- Admin grid data source -->
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="pricematch_request_listing_data_source" xsi:type="string">MagentoGuy\PriceMatch\Model\ResourceModel\PriceMatchRequest\Grid\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="MagentoGuy\PriceMatch\Model\ResourceModel\PriceMatchRequest\Grid\Collection">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">magentoguy_price_match_request</argument>
+            <argument name="resourceModel" xsi:type="string">MagentoGuy\PriceMatch\Model\ResourceModel\PriceMatchRequest</argument>
+        </arguments>
+    </type>
+
+    <!-- Never log the authority API key from config dumps. -->
+    <type name="Magento\Config\Model\Config\TypePool">
+        <arguments>
+            <argument name="sensitive" xsi:type="array">
+                <item name="magentoguy_pricematch/authority/api_key" xsi:type="string">1</item>
+            </argument>
+        </arguments>
+    </type>
+</config>

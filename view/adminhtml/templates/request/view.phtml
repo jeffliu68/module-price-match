@@ -1,0 +1,216 @@
+<?php
+/**
+ * Copyright © MagentoGuy. All rights reserved.
+ */
+/** @var \Magento\Backend\Block\Template $block */
+/** @var \Magento\Framework\Escaper $escaper */
+/** @var \MagentoGuy\PriceMatch\ViewModel\Adminhtml\RequestView $viewModel */
+$viewModel = $block->getData('view_model');
+$request = $viewModel->getRequest();
+$url = $request->getCompetitorUrl();
+$discountPercent = $viewModel->getDiscountPercent();
+$gapPercent = $viewModel->getClaimedGapPercent();
+$orderUrl = $viewModel->getOrderUrl();
+$history = $viewModel->getHistory();
+?>
+<div class="page-actions">
+    <a class="action-default back" href="<?= $escaper->escapeUrl($viewModel->getBackUrl()) ?>">
+        <span><?= $escaper->escapeHtml(__('Back')) ?></span>
+    </a>
+</div>
+
+<section class="admin__page-section">
+    <div class="admin__page-section-title">
+        <span class="title"><?= $escaper->escapeHtml(__('Request')) ?></span>
+    </div>
+    <table class="admin__table-secondary pricematch-details">
+        <tbody>
+        <tr>
+            <th scope="row"><?= $escaper->escapeHtml(__('Status')) ?></th>
+            <td><strong><?= $escaper->escapeHtml($viewModel->getStatusLabel($request->getStatus())) ?></strong></td>
+        </tr>
+        <tr>
+            <th scope="row"><?= $escaper->escapeHtml(__('Customer')) ?></th>
+            <td>
+                <a href="<?= $escaper->escapeUrl($viewModel->getCustomerUrl()) ?>"><?= $escaper->escapeHtml($viewModel->getCustomerLabel()) ?></a>
+            </td>
+        </tr>
+        <tr>
+            <th scope="row"><?= $escaper->escapeHtml(__('SKU')) ?></th>
+            <td><?= $escaper->escapeHtml($request->getSku()) ?></td>
+        </tr>
+        <tr>
+            <th scope="row"><?= $escaper->escapeHtml(__('Competitor URL')) ?></th>
+            <td class="pricematch-url">
+                <?php if ($viewModel->isCompetitorUrlLinkable()): ?>
+                    <a href="<?= $escaper->escapeUrl($url) ?>" target="_blank" rel="noopener noreferrer nofollow"><?= $escaper->escapeHtml($url) ?></a>
+                <?php else: ?>
+                    <?= $escaper->escapeHtml($url) ?>
+                <?php endif; ?>
+                <div class="note"><?= $escaper->escapeHtml(__('Customer-supplied. Magento never fetches this URL; open it only if you trust it.')) ?></div>
+            </td>
+        </tr>
+        <tr>
+            <th scope="row"><?= $escaper->escapeHtml(__('Competitor Price (claimed)')) ?></th>
+            <td>
+                <?= $escaper->escapeHtml($viewModel->formatMoney($request->getClaimedPrice())) ?>
+                <?php if ($gapPercent !== ''): ?>
+                    <span class="note">(<?= $escaper->escapeHtml(__('%1 below our price', $gapPercent)) ?>)</span>
+                <?php endif; ?>
+            </td>
+        </tr>
+        <tr>
+            <th scope="row"><?= $escaper->escapeHtml(__('Verified Price (authority)')) ?></th>
+            <td><?= $escaper->escapeHtml($viewModel->formatMoney($request->getVerifiedPrice())) ?></td>
+        </tr>
+        <tr>
+            <th scope="row"><?= $escaper->escapeHtml(__('Our Price (at evaluation)')) ?></th>
+            <td><?= $escaper->escapeHtml($viewModel->formatMoney($request->getCurrentPrice())) ?></td>
+        </tr>
+        <tr>
+            <th scope="row"><?= $escaper->escapeHtml(__('Matched Price')) ?></th>
+            <td><?= $escaper->escapeHtml($viewModel->formatMoney($request->getMatchedPrice())) ?></td>
+        </tr>
+        <tr>
+            <th scope="row"><?= $escaper->escapeHtml(__('Discount per Unit')) ?></th>
+            <td>
+                <?= $escaper->escapeHtml($viewModel->formatMoney($request->getApprovedDiscount())) ?>
+                <?php if ($discountPercent !== ''): ?>
+                    <span class="note">(<?= $escaper->escapeHtml($discountPercent) ?>)</span>
+                <?php endif; ?>
+            </td>
+        </tr>
+        <?php if ($request->getCouponCode()): ?>
+            <tr>
+                <th scope="row"><?= $escaper->escapeHtml(__('Coupon')) ?></th>
+                <td>
+                    <?= $escaper->escapeHtml($request->getCouponCode()) ?>
+                    <span class="note"><?= $escaper->escapeHtml(__('expires %1', $viewModel->formatDate($request->getExpiresAt()))) ?></span>
+                </td>
+            </tr>
+        <?php endif; ?>
+        <?php if ($request->getRejectReason()): ?>
+            <tr>
+                <th scope="row"><?= $escaper->escapeHtml(__('Reject Reason')) ?></th>
+                <td>
+                    <?= $escaper->escapeHtml($viewModel->getRejectReasonLabel()) ?>
+                    <div class="note"><?= $escaper->escapeHtml(__('Customer was told: "%1"', $viewModel->getCustomerRejectMessage())) ?></div>
+                </td>
+            </tr>
+        <?php endif; ?>
+        <?php if ($orderUrl): ?>
+            <tr>
+                <th scope="row"><?= $escaper->escapeHtml(__('Order')) ?></th>
+                <td><a href="<?= $escaper->escapeUrl($orderUrl) ?>"><?= $escaper->escapeHtml(__('View order')) ?></a></td>
+            </tr>
+        <?php endif; ?>
+        <tr>
+            <th scope="row"><?= $escaper->escapeHtml(__('Evaluation Attempts')) ?></th>
+            <td><?= (int)$request->getAttempts() ?></td>
+        </tr>
+        <?php if ($request->getLastError()): ?>
+            <tr>
+                <th scope="row"><?= $escaper->escapeHtml(__('Last Error')) ?></th>
+                <td><?= $escaper->escapeHtml($request->getLastError()) ?></td>
+            </tr>
+        <?php endif; ?>
+        <?php if ($request->getReviewedBy()): ?>
+            <tr>
+                <th scope="row"><?= $escaper->escapeHtml(__('Reviewed By')) ?></th>
+                <td><?= $escaper->escapeHtml($request->getReviewedBy()) ?></td>
+            </tr>
+        <?php endif; ?>
+        </tbody>
+    </table>
+</section>
+
+<?php if ($viewModel->canReview()): ?>
+    <section class="admin__page-section">
+        <div class="admin__page-section-title">
+            <span class="title"><?= $escaper->escapeHtml(__('Review')) ?></span>
+        </div>
+        <div class="admin__page-section-content pricematch-review">
+            <form method="post" action="<?= $escaper->escapeUrl($viewModel->getActionUrl('approve')) ?>" class="admin__fieldset">
+                <input name="form_key" type="hidden" value="<?= $escaper->escapeHtmlAttr($block->getFormKey()) ?>"/>
+                <div class="admin__field">
+                    <label class="admin__field-label" for="pricematch-approve-note">
+                        <span><?= $escaper->escapeHtml(__('Internal note (optional)')) ?></span>
+                    </label>
+                    <div class="admin__field-control">
+                        <textarea id="pricematch-approve-note" name="note" class="admin__control-textarea" rows="2" maxlength="2000"></textarea>
+                        <div class="admin__field-note">
+                            <?= $escaper->escapeHtml(__('Issues a single-use coupon. The authority check and discount cap are bypassed; the price floor still applies.')) ?>
+                        </div>
+                    </div>
+                </div>
+                <div class="admin__field">
+                    <div class="admin__field-control">
+                        <button type="submit" class="action-primary"><span><?= $escaper->escapeHtml(__('Approve')) ?></span></button>
+                    </div>
+                </div>
+            </form>
+
+            <form method="post" action="<?= $escaper->escapeUrl($viewModel->getActionUrl('reject')) ?>" class="admin__fieldset">
+                <input name="form_key" type="hidden" value="<?= $escaper->escapeHtmlAttr($block->getFormKey()) ?>"/>
+                <div class="admin__field">
+                    <label class="admin__field-label" for="pricematch-reject-reason">
+                        <span><?= $escaper->escapeHtml(__('Reason')) ?></span>
+                    </label>
+                    <div class="admin__field-control">
+                        <select id="pricematch-reject-reason" name="reason" class="admin__control-select">
+                            <?php foreach ($viewModel->getRejectReasonOptions() as $code => $label): ?>
+                                <option value="<?= $escaper->escapeHtmlAttr($code) ?>"><?= $escaper->escapeHtml($label) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <div class="admin__field-note"><?= $escaper->escapeHtml(__('Chooses the wording of the rejection email.')) ?></div>
+                    </div>
+                </div>
+                <div class="admin__field">
+                    <label class="admin__field-label" for="pricematch-reject-note">
+                        <span><?= $escaper->escapeHtml(__('Internal note (optional)')) ?></span>
+                    </label>
+                    <div class="admin__field-control">
+                        <textarea id="pricematch-reject-note" name="note" class="admin__control-textarea" rows="2" maxlength="2000"></textarea>
+                        <div class="admin__field-note"><?= $escaper->escapeHtml(__('Saved to the history below. Never shown to the customer.')) ?></div>
+                    </div>
+                </div>
+                <div class="admin__field">
+                    <div class="admin__field-control">
+                        <button type="submit" class="action-secondary"><span><?= $escaper->escapeHtml(__('Reject')) ?></span></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+<?php endif; ?>
+
+<section class="admin__page-section">
+    <div class="admin__page-section-title">
+        <span class="title"><?= $escaper->escapeHtml(__('History')) ?></span>
+    </div>
+    <table class="data-grid pricematch-history">
+        <thead>
+        <tr>
+            <th class="data-grid-th"><?= $escaper->escapeHtml(__('Date')) ?></th>
+            <th class="data-grid-th"><?= $escaper->escapeHtml(__('Event')) ?></th>
+            <th class="data-grid-th"><?= $escaper->escapeHtml(__('Status')) ?></th>
+            <th class="data-grid-th"><?= $escaper->escapeHtml(__('By')) ?></th>
+            <th class="data-grid-th"><?= $escaper->escapeHtml(__('Note')) ?></th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($history as $row): ?>
+            <tr>
+                <td><?= $escaper->escapeHtml($row['date']) ?></td>
+                <td><?= $escaper->escapeHtml($row['event']) ?></td>
+                <td><?= $escaper->escapeHtml($row['status']) ?></td>
+                <td><?= $escaper->escapeHtml($row['actor']) ?></td>
+                <td><?= $escaper->escapeHtml($row['note']) ?></td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+    <?php if (count($history) === 1 && $request->getStatus() !== 'pending'): ?>
+        <p class="note"><?= $escaper->escapeHtml(__('This request predates the history log, so only its submission is shown.')) ?></p>
+    <?php endif; ?>
+</section>

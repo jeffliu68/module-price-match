@@ -1,0 +1,49 @@
+<?php
+/**
+ * Copyright © MagentoGuy. All rights reserved.
+ */
+/** @var \Magento\Framework\View\Element\Template $block */
+/** @var \Magento\Framework\Escaper $escaper */
+/** @var \MagentoGuy\PriceMatch\ViewModel\CustomerRequests $viewModel */
+$viewModel = $block->getData('view_model');
+$requests = $viewModel->getRequests();
+?>
+<?php if (!$requests): ?>
+    <div class="message info empty"><span><?= $escaper->escapeHtml(__('You have not requested any price matches yet.')) ?></span></div>
+<?php else: ?>
+    <div class="table-wrapper pricematch-requests">
+        <table class="data table">
+            <caption class="table-caption"><?= $escaper->escapeHtml(__('Price Match Requests')) ?></caption>
+            <thead>
+            <tr>
+                <th scope="col" class="col"><?= $escaper->escapeHtml(__('#')) ?></th>
+                <th scope="col" class="col"><?= $escaper->escapeHtml(__('Date')) ?></th>
+                <th scope="col" class="col"><?= $escaper->escapeHtml(__('SKU')) ?></th>
+                <th scope="col" class="col"><?= $escaper->escapeHtml(__('Competitor Price')) ?></th>
+                <th scope="col" class="col"><?= $escaper->escapeHtml(__('Status')) ?></th>
+                <th scope="col" class="col"><?= $escaper->escapeHtml(__('Details')) ?></th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($requests as $request): ?>
+                <tr>
+                    <td data-th="<?= $escaper->escapeHtmlAttr(__('#')) ?>" class="col"><?= (int)$request['id'] ?></td>
+                    <td data-th="<?= $escaper->escapeHtmlAttr(__('Date')) ?>" class="col"><?= $escaper->escapeHtml($viewModel->formatDate($request['created_at'])) ?></td>
+                    <td data-th="<?= $escaper->escapeHtmlAttr(__('SKU')) ?>" class="col"><?= $escaper->escapeHtml($request['sku']) ?></td>
+                    <td data-th="<?= $escaper->escapeHtmlAttr(__('Competitor Price')) ?>" class="col"><?= $escaper->escapeHtml($viewModel->formatMoney($request['competitor_price'])) ?></td>
+                    <td data-th="<?= $escaper->escapeHtmlAttr(__('Status')) ?>" class="col"><?= $escaper->escapeHtml($request['status_label']) ?></td>
+                    <td data-th="<?= $escaper->escapeHtmlAttr(__('Details')) ?>" class="col">
+                        <?php if ($request['coupon_code']): ?>
+                            <?= $escaper->escapeHtml(__('Code %1: up to %2 off one unit, until %3.', $request['coupon_code'], $viewModel->formatMoney($request['discount']), $viewModel->formatDate($request['coupon_expires_at']))) ?>
+                        <?php elseif ($request['reject_reason']): ?>
+                            <?= $escaper->escapeHtml($request['reject_reason']) ?>
+                        <?php elseif ($request['status'] === 'PENDING' || $request['status'] === 'NEEDS_REVIEW'): ?>
+                            <?= $escaper->escapeHtml(__('We are checking this price and will email you.')) ?>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+<?php endif; ?>

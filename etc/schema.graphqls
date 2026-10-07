@@ -1,0 +1,75 @@
+# Copyright © MagentoGuy. All rights reserved.
+
+type Mutation {
+    submitPriceMatchRequest(input: SubmitPriceMatchRequestInput! @doc(description: "Competitor price claim for one product.")): PriceMatchRequest
+        @resolver(class: "MagentoGuy\\PriceMatch\\Model\\Resolver\\SubmitPriceMatchRequest")
+        @doc(description: "Submit a price match request. Returns immediately with status PENDING; evaluation happens asynchronously. Replaying the same idempotency_key returns the original request. Requires a customer token.")
+}
+
+type Query {
+    priceMatchRequest(id: Int! @doc(description: "Request ID returned by submitPriceMatchRequest.")): PriceMatchRequest
+        @resolver(class: "MagentoGuy\\PriceMatch\\Model\\Resolver\\PriceMatchRequestQuery")
+        @doc(description: "Poll one of the current customer's price match requests.")
+        @cache(cacheable: false)
+    customerPriceMatchRequests(
+        pageSize: Int = 20 @doc(description: "Max 50."),
+        currentPage: Int = 1
+    ): PriceMatchRequests
+        @resolver(class: "MagentoGuy\\PriceMatch\\Model\\Resolver\\CustomerPriceMatchRequests")
+        @doc(description: "The current customer's price match requests, newest first.")
+        @cache(cacheable: false)
+}
+
+input SubmitPriceMatchRequestInput {
+    sku: String @doc(description: "SKU of a simple or virtual product, or a configurable's child. Send this or parent_sku, not both.")
+    parent_sku: String @doc(description: "Configurable product SKU; the child is picked from selected_options, as in addProductsToCart.")
+    selected_options: [ID!] @doc(description: "With parent_sku: one option UID per configurable attribute (configurable_options.values.uid).")
+    competitor_url: String! @doc(description: "Product page at an allow-listed retailer.")
+    competitor_price: Float! @doc(description: "Competitor price in the store's base currency.")
+    idempotency_key: String! @doc(description: "Client-generated key (8-64 chars, [A-Za-z0-9_-]); retries must reuse it.")
+}
+
+enum PriceMatchRequestStatus {
+    PENDING
+    APPROVED
+    REJECTED
+    NEEDS_REVIEW
+    REDEEMED
+    EXPIRED
+}
+
+type PriceMatchRequest {
+    id: Int!
+    sku: String!
+    competitor_url: String!
+    competitor_price: Money!
+    status: PriceMatchRequestStatus!
+    status_label: String!
+    reject_reason: String @doc(description: "Customer-facing explanation when REJECTED.")
+    matched_price: Money
+    discount: Money @doc(description: "Maximum discount the coupon gives on one unit.")
+    coupon_code: String @doc(description: "Single-use code bound to this customer and SKU; only while APPROVED.")
+    coupon_expires_at: String @doc(description: "UTC, Y-m-d H:i:s.")
+    created_at: String!
+    updated_at: String
+}
+
+type PriceMatchRequests {
+    items: [PriceMatchRequest]!
+    total_count: Int!
+    page_info: SearchResultPageInfo
+}
+
+interface ProductInterface {
+    price_match_eligible: Boolean
+        @resolver(class: "MagentoGuy\\PriceMatch\\Model\\Resolver\\Product\\PriceMatchEligible")
+        @doc(description: "Whether to offer a price match request: the feature is on for this store, the product type is supported, and neither the product nor its configurable parent has Allow Price Match set to No. Stock is not considered.")
+}
+
+type StoreConfig {
+    price_match_enabled: Boolean @doc(description: "Price match requests are accepted in this store view.")
+    price_match_allowed_domains: [String!]
+        @resolver(class: "MagentoGuy\\PriceMatch\\Model\\Resolver\\StoreConfig\\AllowedDomains")
+        @doc(description: "Retailer domains accepted as competitors, lower-case; their subdomains are accepted too.")
+    price_match_coupon_ttl_hours: Int @doc(description: "How long an approved coupon stays valid, in hours.")
+}

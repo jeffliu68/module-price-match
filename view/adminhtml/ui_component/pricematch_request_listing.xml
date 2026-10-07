@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">pricematch_request_listing.pricematch_request_listing_data_source</item>
+        </item>
+    </argument>
+    <settings>
+        <spinner>pricematch_request_columns</spinner>
+        <deps>
+            <dep>pricematch_request_listing.pricematch_request_listing_data_source</dep>
+        </deps>
+    </settings>
+    <dataSource name="pricematch_request_listing_data_source" component="Magento_Ui/js/grid/provider">
+        <settings>
+            <storageConfig>
+                <param name="indexField" xsi:type="string">request_id</param>
+            </storageConfig>
+            <updateUrl path="mui/index/render"/>
+        </settings>
+        <aclResource>MagentoGuy_PriceMatch::requests</aclResource>
+        <dataProvider class="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider" name="pricematch_request_listing_data_source">
+            <settings>
+                <requestFieldName>id</requestFieldName>
+                <primaryFieldName>request_id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <listingToolbar name="listing_top">
+        <settings>
+            <sticky>true</sticky>
+        </settings>
+        <bookmark name="bookmarks"/>
+        <columnsControls name="columns_controls"/>
+        <filters name="listing_filters"/>
+        <paging name="listing_paging"/>
+    </listingToolbar>
+    <columns name="pricematch_request_columns">
+        <column name="request_id" sortOrder="10">
+            <settings>
+                <filter>textRange</filter>
+                <label translate="true">ID</label>
+                <sorting>desc</sorting>
+            </settings>
+        </column>
+        <column name="created_at" class="Magento\Ui\Component\Listing\Columns\Date" component="Magento_Ui/js/grid/columns/date" sortOrder="20">
+            <settings>
+                <filter>dateRange</filter>
+                <dataType>date</dataType>
+                <label translate="true">Created</label>
+            </settings>
+        </column>
+        <column name="status" component="Magento_Ui/js/grid/columns/select" sortOrder="30">
+            <settings>
+                <options class="MagentoGuy\PriceMatch\Model\Status"/>
+                <filter>select</filter>
+                <dataType>select</dataType>
+                <label translate="true">Status</label>
+            </settings>
+        </column>
+        <column name="customer_email" sortOrder="40">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Customer</label>
+            </settings>
+        </column>
+        <column name="sku" sortOrder="50">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">SKU</label>
+            </settings>
+        </column>
+        <column name="competitor_host" sortOrder="60">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Competitor</label>
+            </settings>
+        </column>
+        <column name="competitor_url" sortOrder="65">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Competitor URL</label>
+            </settings>
+        </column>
+        <column name="claimed_price" class="Magento\Catalog\Ui\Component\Listing\Columns\Price" sortOrder="70">
+            <settings>
+                <filter>textRange</filter>
+                <label translate="true">Claimed Price</label>
+            </settings>
+        </column>
+        <column name="current_price" class="Magento\Catalog\Ui\Component\Listing\Columns\Price" sortOrder="80">
+            <settings>
+                <label translate="true">Our Price</label>
+            </settings>
+        </column>
+        <column name="verified_price" class="Magento\Catalog\Ui\Component\Listing\Columns\Price" sortOrder="90">
+            <settings>
+                <label translate="true">Verified Price</label>
+            </settings>
+        </column>
+        <column name="approved_discount" class="Magento\Catalog\Ui\Component\Listing\Columns\Price" sortOrder="100">
+            <settings>
+                <label translate="true">Discount / Unit</label>
+            </settings>
+        </column>
+        <column name="coupon_code" sortOrder="110">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Coupon</label>
+            </settings>
+        </column>
+        <column name="expires_at" class="Magento\Ui\Component\Listing\Columns\Date" component="Magento_Ui/js/grid/columns/date" sortOrder="120">
+            <settings>
+                <dataType>date</dataType>
+                <label translate="true">Expires</label>
+            </settings>
+        </column>
+        <column name="reject_reason" component="Magento_Ui/js/grid/columns/select" sortOrder="130">
+            <settings>
+                <options class="MagentoGuy\PriceMatch\Model\Evaluation\RejectReason"/>
+                <filter>select</filter>
+                <dataType>select</dataType>
+                <label translate="true">Reject Reason</label>
+            </settings>
+        </column>
+        <column name="attempts" sortOrder="140">
+            <settings>
+                <label translate="true">Attempts</label>
+            </settings>
+        </column>
+        <column name="next_attempt_at" class="Magento\Ui\Component\Listing\Columns\Date" component="Magento_Ui/js/grid/columns/date" sortOrder="150">
+            <settings>
+                <dataType>date</dataType>
+                <label translate="true">Next Attempt</label>
+            </settings>
+        </column>
+        <column name="last_error" sortOrder="160">
+            <settings>
+                <label translate="true">Last Error</label>
+            </settings>
+        </column>
+        <column name="order_id" sortOrder="170">
+            <settings>
+                <label translate="true">Order ID</label>
+            </settings>
+        </column>
+        <column name="reviewed_by" sortOrder="180">
+            <settings>
+                <label translate="true">Reviewed By</label>
+                <visible>false</visible>
+            </settings>
+        </column>
+        <actionsColumn name="actions" class="MagentoGuy\PriceMatch\Ui\Component\Listing\Column\RequestActions" sortOrder="200">
+            <settings>
+                <indexField>request_id</indexField>
+            </settings>
+        </actionsColumn>
+    </columns>
+</listing>

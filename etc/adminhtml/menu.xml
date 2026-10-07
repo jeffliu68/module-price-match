@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="MagentoGuy_PriceMatch::price_match" title="Price Match" translate="title" module="MagentoGuy_PriceMatch"
+             sortOrder="60" parent="Magento_Backend::marketing" resource="MagentoGuy_PriceMatch::requests"/>
+        <add id="MagentoGuy_PriceMatch::requests" title="Price Match Requests" translate="title" module="MagentoGuy_PriceMatch"
+             sortOrder="10" parent="MagentoGuy_PriceMatch::price_match" action="pricematch/request/index"
+             resource="MagentoGuy_PriceMatch::requests"/>
+    </menu>
+</config>

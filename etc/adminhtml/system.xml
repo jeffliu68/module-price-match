@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="magentoguy_pricematch" translate="label" sortOrder="900" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Price Match</label>
+            <tab>sales</tab>
+            <resource>MagentoGuy_PriceMatch::config</resource>
+            <group id="general" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Policy</label>
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="allowed_domains" translate="label comment" type="textarea" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Allowed Competitor Domains</label>
+                    <comment>One per line. Subdomains are allowed (www.amazon.com matches amazon.com).</comment>
+                </field>
+                <field id="max_discount_percent" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Maximum Discount (%)</label>
+                    <comment>Requests whose price difference exceeds this percentage of our price are rejected automatically. Admins can still approve them by hand.</comment>
+                    <validate>required-entry validate-number validate-zero-or-greater</validate>
+                </field>
+                <field id="coupon_ttl_hours" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Coupon Lifetime (hours)</label>
+                    <validate>required-entry validate-digits validate-greater-than-zero</validate>
+                </field>
+                <field id="daily_limit" translate="label comment" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Requests per Customer per 24h</label>
+                    <comment>0 = unlimited.</comment>
+                    <validate>required-entry validate-digits</validate>
+                </field>
+                <field id="sku_cooldown_hours" translate="label comment" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Per-Product Cooldown (hours)</label>
+                    <comment>Minimum time between two requests for the same product by the same customer. Rejected requests don't count, so a corrected request can be sent straight away. 0 = none.</comment>
+                    <validate>required-entry validate-digits</validate>
+                </field>
+            </group>
+            <group id="authority" translate="label" sortOrder="20" showInDefault="1">
+                <label>Pricing Authority</label>
+                <field id="url" translate="label" type="text" sortOrder="10" showInDefault="1" canRestore="1">
+                    <label>Endpoint URL</label>
+                    <validate>required-entry validate-url</validate>
+                </field>
+                <field id="api_key" translate="label" type="obscure" sortOrder="20" showInDefault="1">
+                    <label>API Key</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                </field>
+                <field id="timeout" translate="label" type="text" sortOrder="30" showInDefault="1" canRestore="1">
+                    <label>Request Timeout (seconds)</label>
+                    <validate>required-entry validate-digits validate-greater-than-zero</validate>
+                </field>
+                <field id="retry_backoff" translate="label comment" type="text" sortOrder="40" showInDefault="1" canRestore="1">
+                    <label>Retry Backoff (seconds)</label>
+                    <comment>Comma-separated delay before each retry. "30,120,600" = 3 retries, then Needs Review.</comment>
+                </field>
+                <field id="breaker_threshold" translate="label" type="text" sortOrder="50" showInDefault="1" canRestore="1">
+                    <label>Circuit Breaker: Consecutive Failures</label>
+                    <validate>required-entry validate-digits validate-greater-than-zero</validate>
+                </field>
+                <field id="breaker_cooldown" translate="label" type="text" sortOrder="60" showInDefault="1" canRestore="1">
+                    <label>Circuit Breaker: Open Duration (seconds)</label>
+                    <validate>required-entry validate-digits validate-greater-than-zero</validate>
+                </field>
+            </group>
+            <group id="email" translate="label" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Customer Emails</label>
+                <field id="identity" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Sender</label>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Identity</source_model>
+                </field>
+                <field id="approved_template" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Approved Template</label>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Template</source_model>
+                </field>
+                <field id="rejected_template" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Rejected Template</label>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Template</source_model>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

@@ -1,0 +1,22 @@
+<!--
+/**
+ * Copyright © MagentoGuy. All rights reserved.
+ */
+-->
+<!--@subject {{trans "Update on your price match request for %sku" sku=$sku}} @-->
+<!--@vars {
+"var customer_name":"Customer Name",
+"var product_name":"Product Name",
+"var sku":"SKU",
+"var competitor_host":"Competitor",
+"var reason":"Reason",
+"var account_url":"Account URL"
+} @-->
+{{template config_path="design/email/header_template"}}
+
+<p class="greeting">{{trans "Hi %name," name=$customer_name}}</p>
+<p>{{trans "Thanks for letting us know about the price for %product (%sku) at %competitor." product=$product_name sku=$sku competitor=$competitor_host}}</p>
+<p>{{trans "Unfortunately we could not approve this request: %reason" reason=$reason}}</p>
+<p><a href="{{var account_url}}">{{trans "View your price match requests"}}</a></p>
+
+{{template config_path="design/email/footer_template"}}

@@ -1,0 +1,49 @@
+<?php
+/**
+ * Copyright © MagentoGuy. All rights reserved.
+ */
+/** @var \Magento\Catalog\Block\Product\View $block */
+/** @var \Magento\Framework\Escaper $escaper */
+/** @var \MagentoGuy\PriceMatch\ViewModel\ProductPriceMatch $viewModel */
+$viewModel = $block->getData('view_model');
+$product = $block->getProduct();
+if (!$viewModel->isAvailable($product)) {
+    return;
+}
+$elementId = 'pricematch-' . (int)$product->getId();
+?>
+<div class="pricematch" id="<?= $escaper->escapeHtmlAttr($elementId) ?>">
+    <button type="button" class="action secondary pricematch-open" data-role="pricematch-open">
+        <span><?= $escaper->escapeHtml(__('Price match')) ?></span>
+    </button>
+    <div class="pricematch-modal no-display" data-role="pricematch-modal">
+        <form class="form" data-role="pricematch-form" novalidate>
+            <p><?= $escaper->escapeHtml(__('Tell us where you saw a lower price. We verify it in the background and, if approved, send you a single-use coupon for one unit.')) ?></p>
+            <fieldset class="fieldset">
+                <div class="field required">
+                    <label class="label" for="<?= $escaper->escapeHtmlAttr($elementId) ?>-url">
+                        <span><?= $escaper->escapeHtml(__('Competitor product URL')) ?></span>
+                    </label>
+                    <div class="control">
+                        <input type="url" class="input-text" name="competitor_url" maxlength="1024" required
+                               id="<?= $escaper->escapeHtmlAttr($elementId) ?>-url"
+                               placeholder="https://www.amazon.com/..."/>
+                    </div>
+                </div>
+                <div class="field required">
+                    <label class="label" for="<?= $escaper->escapeHtmlAttr($elementId) ?>-price">
+                        <span><?= $escaper->escapeHtml(__('Competitor price')) ?></span>
+                    </label>
+                    <div class="control">
+                        <input type="number" class="input-text" name="competitor_price" step="0.01" min="0.01" required
+                               id="<?= $escaper->escapeHtmlAttr($elementId) ?>-price"/>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+        <div class="message no-display" data-role="pricematch-message"></div>
+    </div>
+</div>
+<script type="text/x-magento-init">
+    {"#<?= $escaper->escapeJs($elementId) ?>": {"MagentoGuy_PriceMatch/js/price-match": <?= /* @noEscape */ $viewModel->getJsConfig($product) ?>}}
+</script>

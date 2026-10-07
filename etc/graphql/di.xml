@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <!-- storeConfig fields a headless storefront needs to show the form; cap, limits and authority settings stay private. -->
+    <type name="Magento\StoreGraphQl\Model\Resolver\Store\StoreConfigDataProvider">
+        <arguments>
+            <argument name="extendedConfigData" xsi:type="array">
+                <item name="price_match_enabled" xsi:type="string">magentoguy_pricematch/general/enabled</item>
+                <item name="price_match_coupon_ttl_hours" xsi:type="string">magentoguy_pricematch/general/coupon_ttl_hours</item>
+            </argument>
+        </arguments>
+    </type>
+</config>

@@ -1,0 +1,65 @@
+{
+    "magentoguy_price_match_request": {
+        "column": {
+            "request_id": true,
+            "customer_id": true,
+            "store_id": true,
+            "product_id": true,
+            "sku": true,
+            "competitor_url": true,
+            "competitor_host": true,
+            "claimed_price": true,
+            "current_price": true,
+            "verified_price": true,
+            "matched_price": true,
+            "approved_discount": true,
+            "currency_code": true,
+            "status": true,
+            "reject_reason": true,
+            "coupon_code": true,
+            "idempotency_key": true,
+            "open_key": true,
+            "attempts": true,
+            "next_attempt_at": true,
+            "locked_until": true,
+            "last_error": true,
+            "expires_at": true,
+            "order_id": true,
+            "reviewed_by": true,
+            "created_at": true,
+            "updated_at": true
+        },
+        "index": {
+            "MAGENTOGUY_PRICE_MATCH_REQUEST_CUSTOMER_ID_SKU_STATUS": true,
+            "MAGENTOGUY_PRICE_MATCH_REQUEST_CUSTOMER_ID_CREATED_AT": true,
+            "MAGENTOGUY_PRICE_MATCH_REQUEST_STATUS_NEXT_ATTEMPT_AT": true,
+            "MAGENTOGUY_PRICE_MATCH_REQUEST_STATUS_EXPIRES_AT": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "MAGENTOGUY_PRICE_MATCH_REQUEST_CSTR_ID_CSTR_ENTT_ENTT_ID": true,
+            "MAGENTOGUY_PRICE_MATCH_REQUEST_STORE_ID_STORE_STORE_ID": true,
+            "MAGENTOGUY_PRICE_MATCH_REQUEST_CUSTOMER_ID_IDEMPOTENCY_KEY": true,
+            "MAGENTOGUY_PRICE_MATCH_REQUEST_COUPON_CODE": true,
+            "MAGENTOGUY_PRICE_MATCH_REQUEST_OPEN_KEY": true
+        }
+    },
+    "magentoguy_price_match_request_history": {
+        "column": {
+            "history_id": true,
+            "request_id": true,
+            "event": true,
+            "status": true,
+            "actor": true,
+            "note": true,
+            "created_at": true
+        },
+        "index": {
+            "MAGENTOGUY_PRICE_MATCH_REQUEST_HISTORY_REQUEST_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "FK_F15790329A693A6EF47319D67FAA2422": true
+        }
+    }
+}

@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="magentoguy_price_match_request" resource="default" engine="innodb" comment="Price Match Requests">
+        <column xsi:type="int" name="request_id" unsigned="true" nullable="false" identity="true" comment="Request ID"/>
+        <column xsi:type="int" name="customer_id" unsigned="true" nullable="false" identity="false" comment="Customer ID"/>
+        <column xsi:type="smallint" name="store_id" unsigned="true" nullable="false" identity="false" comment="Store ID"/>
+        <column xsi:type="int" name="product_id" unsigned="true" nullable="false" identity="false" comment="Product entity ID"/>
+        <column xsi:type="varchar" name="sku" nullable="false" length="64" comment="SKU"/>
+        <column xsi:type="varchar" name="competitor_url" nullable="false" length="1024" comment="Competitor URL"/>
+        <column xsi:type="varchar" name="competitor_host" nullable="false" length="255" comment="Competitor host"/>
+        <column xsi:type="decimal" name="claimed_price" scale="6" precision="20" unsigned="false" nullable="false" comment="Price claimed by customer"/>
+        <column xsi:type="decimal" name="current_price" scale="6" precision="20" unsigned="false" nullable="true" comment="Our final price at last evaluation"/>
+        <column xsi:type="decimal" name="verified_price" scale="6" precision="20" unsigned="false" nullable="true" comment="Price confirmed by authority"/>
+        <column xsi:type="decimal" name="matched_price" scale="6" precision="20" unsigned="false" nullable="true" comment="Price we match to"/>
+        <column xsi:type="decimal" name="approved_discount" scale="6" precision="20" unsigned="false" nullable="true" comment="Max discount per unit"/>
+        <column xsi:type="varchar" name="currency_code" nullable="false" length="3" comment="Base currency"/>
+        <column xsi:type="varchar" name="status" nullable="false" length="32" default="pending" comment="Status"/>
+        <column xsi:type="varchar" name="reject_reason" nullable="true" length="64" comment="Reject reason code"/>
+        <column xsi:type="varchar" name="coupon_code" nullable="true" length="64" comment="Issued coupon code"/>
+        <column xsi:type="varchar" name="idempotency_key" nullable="false" length="64" comment="Client idempotency key"/>
+        <column xsi:type="varchar" name="open_key" nullable="true" length="128" comment="customer:sku while open; NULL when closed"/>
+        <column xsi:type="smallint" name="attempts" unsigned="true" nullable="false" identity="false" default="0" comment="Evaluation attempts"/>
+        <column xsi:type="datetime" name="next_attempt_at" on_update="false" nullable="true" comment="Next scheduled evaluation"/>
+        <column xsi:type="datetime" name="locked_until" on_update="false" nullable="true" comment="Consumer claim lease"/>
+        <column xsi:type="text" name="last_error" nullable="true" comment="Last evaluation error"/>
+        <column xsi:type="datetime" name="expires_at" on_update="false" nullable="true" comment="Coupon expiry"/>
+        <column xsi:type="int" name="order_id" unsigned="true" nullable="true" identity="false" comment="Redeeming order ID"/>
+        <column xsi:type="varchar" name="reviewed_by" nullable="true" length="40" comment="Admin username for manual decisions"/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Created at"/>
+        <column xsi:type="timestamp" name="updated_at" on_update="true" nullable="false" default="CURRENT_TIMESTAMP" comment="Updated at"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="request_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="MAGENTOGUY_PRICE_MATCH_REQUEST_CUSTOMER_ID_CUSTOMER_ENTITY_ENTITY_ID"
+                    table="magentoguy_price_match_request" column="customer_id"
+                    referenceTable="customer_entity" referenceColumn="entity_id" onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="MAGENTOGUY_PRICE_MATCH_REQUEST_STORE_ID_STORE_STORE_ID"
+                    table="magentoguy_price_match_request" column="store_id"
+                    referenceTable="store" referenceColumn="store_id" onDelete="CASCADE"/>
+        <constraint xsi:type="unique" referenceId="MAGENTOGUY_PRICE_MATCH_REQUEST_CUSTOMER_ID_IDEMPOTENCY_KEY">
+            <column name="customer_id"/>
+            <column name="idempotency_key"/>
+        </constraint>
+        <constraint xsi:type="unique" referenceId="MAGENTOGUY_PRICE_MATCH_REQUEST_COUPON_CODE">
+            <column name="coupon_code"/>
+        </constraint>
+        <constraint xsi:type="unique" referenceId="MAGENTOGUY_PRICE_MATCH_REQUEST_OPEN_KEY">
+            <column name="open_key"/>
+        </constraint>
+        <index referenceId="MAGENTOGUY_PRICE_MATCH_REQUEST_CUSTOMER_ID_SKU_STATUS" indexType="btree">
+            <column name="customer_id"/>
+            <column name="sku"/>
+            <column name="status"/>
+        </index>
+        <index referenceId="MAGENTOGUY_PRICE_MATCH_REQUEST_CUSTOMER_ID_CREATED_AT" indexType="btree">
+            <column name="customer_id"/>
+            <column name="created_at"/>
+        </index>
+        <index referenceId="MAGENTOGUY_PRICE_MATCH_REQUEST_STATUS_NEXT_ATTEMPT_AT" indexType="btree">
+            <column name="status"/>
+            <column name="next_attempt_at"/>
+        </index>
+        <index referenceId="MAGENTOGUY_PRICE_MATCH_REQUEST_STATUS_EXPIRES_AT" indexType="btree">
+            <column name="status"/>
+            <column name="expires_at"/>
+        </index>
+    </table>
+    <table name="magentoguy_price_match_request_history" resource="default" engine="innodb" comment="Price Match Request History">
+        <column xsi:type="int" name="history_id" unsigned="true" nullable="false" identity="true" comment="History ID"/>
+        <column xsi:type="int" name="request_id" unsigned="true" nullable="false" identity="false" comment="Request ID"/>
+        <column xsi:type="varchar" name="event" nullable="false" length="32" comment="Event code"/>
+        <column xsi:type="varchar" name="status" nullable="true" length="32" comment="Status after the event"/>
+        <column xsi:type="varchar" name="actor" nullable="true" length="64" comment="Admin username; NULL for the system"/>
+        <column xsi:type="text" name="note" nullable="true" comment="Detail or admin note"/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Created at"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="history_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="MAGENTOGUY_PRICE_MATCH_REQUEST_HISTORY_REQUEST_ID"
+                    table="magentoguy_price_match_request_history" column="request_id"
+                    referenceTable="magentoguy_price_match_request" referenceColumn="request_id" onDelete="CASCADE"/>
+        <index referenceId="MAGENTOGUY_PRICE_MATCH_REQUEST_HISTORY_REQUEST_ID" indexType="btree">
+            <column name="request_id"/>
+        </index>
+    </table>
+</schema>
