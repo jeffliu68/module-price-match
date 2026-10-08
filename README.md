@@ -2,7 +2,7 @@
 
 Shoppers submit a competitor's price for a product. The request is checked in the background against a pricing service, and on approval the shopper gets a single-use coupon locked to their account, that product and one unit.
 
-Works on Magento Open Source and Adobe Commerce.
+Works on Magento Open Source and Adobe Commerce. Design, diagrams and decisions: [DESIGN.md](DESIGN.md).
 
 ## Install
 

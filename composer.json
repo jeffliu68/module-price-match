@@ -36,7 +36,8 @@
     },
     "archive": {
         "exclude": [
-            "/dev"
+            "/dev",
+            "/DESIGN.md"
         ]
     }
 }
